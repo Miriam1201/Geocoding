@@ -20,7 +20,6 @@ use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\City;
 use App\Models\State;
-use App\Services\GeocodeService;
 
 class ResourceResource extends Resource
 {
@@ -59,6 +58,7 @@ class ResourceResource extends Resource
                             ->directory('area-images-icons')
                             ->label('Icon Image'),
                     ]),
+
                 Select::make('sub_category_id')
                     ->label('SubCategory')
                     ->relationship('subCategory', 'name')
@@ -96,7 +96,7 @@ class ResourceResource extends Resource
                             ->directory('subcategory-images-icons')
                             ->label('Icon')
                             ->image(),
-                        
+
                     ]),
 
                 TextInput::make('address')->nullable(),
@@ -122,21 +122,6 @@ class ResourceResource extends Resource
                             return [];
                         }
                         return City::where('state_id', $stateId)->pluck('name', 'id');
-                    })
-                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                        $stateId = $get('state_id');
-                        $cityId = $state;
-
-                        if ($stateId && $cityId) {
-                            $stateName = State::find($stateId)->name ?? '';
-                            $cityName = City::find($cityId)->name ?? '';
-
-                            $geocodeService = app(GeocodeService::class);
-                            $coordinates = $geocodeService->getCoordinates($stateName, $cityName);
-
-                            $set('latitude', $coordinates['latitude']);
-                            $set('longitude', $coordinates['longitude']);
-                        }
                     }),
 
                 TextInput::make('village')->nullable(),
@@ -158,18 +143,21 @@ class ResourceResource extends Resource
                     ->url()
                     ->nullable()
                     ->maxLength(255),
+
+                // Campos de latitud y longitud como no editables
                 TextInput::make('latitude')
                     ->numeric()
                     ->nullable()
-                    ->reactive()    
                     ->minValue(-90)
-                    ->maxValue(90),
+                    ->maxValue(90)
+                    ->disabled(),  // El usuario no podrá modificar este campo
+
                 TextInput::make('longitude')
                     ->numeric()
                     ->nullable()
-                    ->reactive()
                     ->minValue(-180)
-                    ->maxValue(180),
+                    ->maxValue(180)
+                    ->disabled(),  // El usuario no podrá modificar este campo
 
                 FileUpload::make('images')
                     ->multiple()
@@ -186,7 +174,7 @@ class ResourceResource extends Resource
                 TextColumn::make('name')->searchable(),
                 TextColumn::make('category.name')->label('Category')->sortable(),
                 TextColumn::make('subcategory.name')->label('SubCategory')->sortable(),
-                TextColumn::make('state.name')->label('state')->sortable(),
+                TextColumn::make('state.name')->label('State')->sortable(),
                 TextColumn::make('city.name')->label('City')->sortable(),
             ])
             ->filters([
