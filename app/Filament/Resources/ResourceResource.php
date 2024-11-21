@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ResourceResource\Pages;
-use App\Filament\Resources\ResourceResource\RelationManagers;
 use App\Models\Resource as ResourceModel;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
@@ -22,8 +19,8 @@ use Filament\Forms\Components\ColorPicker;
 use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\City;
-
-
+use App\Models\State;
+use App\Services\GeocodeService;
 
 class ResourceResource extends Resource
 {
@@ -117,10 +114,29 @@ class ResourceResource extends Resource
                     ->label('City')
                     ->relationship('city', 'name')
                     ->required()
+                    ->reactive()
                     ->disabled(fn($get) => !$get('state_id'))
                     ->options(function (\Filament\Forms\Get $get) {
-                        $state = $get('state_id');
-                        return City::where('state_id', $state)->pluck('name', 'id');
+                        $stateId = $get('state_id');
+                        if (!$stateId) {
+                            return [];
+                        }
+                        return City::where('state_id', $stateId)->pluck('name', 'id');
+                    })
+                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                        $stateId = $get('state_id');
+                        $cityId = $state;
+
+                        if ($stateId && $cityId) {
+                            $stateName = State::find($stateId)->name ?? '';
+                            $cityName = City::find($cityId)->name ?? '';
+
+                            $geocodeService = app(GeocodeService::class);
+                            $coordinates = $geocodeService->getCoordinates($stateName, $cityName);
+
+                            $set('latitude', $coordinates['latitude']);
+                            $set('longitude', $coordinates['longitude']);
+                        }
                     }),
 
                 TextInput::make('village')->nullable(),
@@ -145,11 +161,13 @@ class ResourceResource extends Resource
                 TextInput::make('latitude')
                     ->numeric()
                     ->nullable()
+                    ->reactive()    
                     ->minValue(-90)
                     ->maxValue(90),
                 TextInput::make('longitude')
                     ->numeric()
                     ->nullable()
+                    ->reactive()
                     ->minValue(-180)
                     ->maxValue(180),
 

@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\SubCategoryController;
 use App\Http\Controllers\Api\ResourceController;
 use App\Http\Controllers\Api\CityController;
 
+
 Route::get('/user', function (Request $request): JsonResponse {
     try {
         $user = $request->user();

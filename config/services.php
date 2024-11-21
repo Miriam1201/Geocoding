@@ -14,6 +14,10 @@ return [
     |
     */
 
+    'geocode' => [
+        'api_key' => env('GEOCODE_API_KEY'),
+    ],
+
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
