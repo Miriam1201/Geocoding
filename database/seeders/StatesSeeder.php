@@ -7,18 +7,21 @@ use Illuminate\Support\Facades\DB;
 use Proyectopy\Spaindatabasecities\ProcesarDatos;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class CiudadesSeeder extends Seeder
+class StatesSeeder extends Seeder
 {
+
     /**
      * Run the database seeds.
+     *
+     * @return void
      */
     public function run()
     {
 
         // Get Data
-        $cities = ProcesarDatos::getCities();
+        $states = ProcesarDatos::getStates();
 
         // Insert Data to Database
-        DB::table('cities')->insert($cities);
+        DB::table('states')->insert($states);
     }
 }

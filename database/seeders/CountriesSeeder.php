@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Proyectopy\Spaindatabasecities\ProcesarDatos;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class ProvinciasSeeder extends Seeder
+class CountriesSeeder extends Seeder
 {
 
     /**
@@ -19,9 +19,9 @@ class ProvinciasSeeder extends Seeder
     {
 
         // Get Data
-        $states = ProcesarDatos::getStates();
+        $countries = ProcesarDatos::getCountries();
 
         // Insert Data to Database
-        DB::table('states')->insert($states);
+        DB::table('countries')->insert($countries);
     }
 }

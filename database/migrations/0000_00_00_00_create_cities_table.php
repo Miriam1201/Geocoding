@@ -15,13 +15,13 @@ class CreateCitiesTable extends Migration
     {
        Schema::create('cities', function (Blueprint $table) {
         $table->engine = 'InnoDB';
-        $table->increments('id')->index();
+        $table->id();
         $table->string('name');
         $table->integer('state_id');
         $table->timestamps();
     });
     }
-
+  
     /**
      * Reverse the migrations.
      *
