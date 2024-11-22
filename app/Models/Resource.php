@@ -9,10 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Services\GeocodeService;
 
-
 class Resource extends Model
 {
-    //
     use HasFactory;
 
     protected $fillable = [
@@ -31,39 +29,36 @@ class Resource extends Model
         'url',
         'latitude',
         'longitude',
-        'images'
+        'images',
     ];
 
     protected $casts = [
         'images' => 'array',
     ];
 
+    // Método para obtener las coordenadas usando GeocodeService
+    public function updateCoordinates(): void
+    {
+        $state = $this->state;
+        $city = $this->city;
+
+        if ($state && $city) {
+            $geocodeService = app(GeocodeService::class);
+            $coordinates = $geocodeService->getCoordinates($state->name, $city->name);
+
+            $this->latitude = $coordinates['latitude'];
+            $this->longitude = $coordinates['longitude'];
+        }
+    }
+
     protected static function booted(): void
     {
         static::creating(function ($resource): void {
-            $state = $resource->state;
-            $city = $resource->city;
-
-            if ($state && $city) {
-                $geocodeService = app(GeocodeService::class);
-                $coordinates = $geocodeService->getCoordinates($state->name, $city->name);
-
-                $resource->latitude = $coordinates['latitude'];
-                $resource->longitude = $coordinates['longitude'];
-            }
+            $resource->updateCoordinates();
         });
 
         static::updating(function ($resource): void {
-            $state = $resource->state;
-            $city = $resource->city;
-
-            if ($state && $city) {
-                $geocodeService = app(GeocodeService::class);
-                $coordinates = $geocodeService->getCoordinates($state->name, $city->name);
-
-                $resource->latitude = $coordinates['latitude'];
-                $resource->longitude = $coordinates['longitude'];
-            }
+            $resource->updateCoordinates();
         });
     }
 
@@ -81,6 +76,7 @@ class Resource extends Model
     {
         return $this->belongsTo(State::class);
     }
+
     public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);

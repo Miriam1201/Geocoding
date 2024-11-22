@@ -7,11 +7,14 @@
     "require": {
         "php": "^8.2",
         "bezhansalleh/filament-shield": "^3.3",
+        "codewithdennis/filament-simple-map": "^3.0",
+        "dotswan/filament-map-picker": "^1.5",
         "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
+        "larswiegers/laravel-maps": "^0.18.0",
         "proyectopy/spaindatabasecities": "^1.0"
     },
     "require-dev": {

@@ -10,7 +10,7 @@ class GeocodeService
     {
         $address = $city . ', ' . $state;
 
-        // Obtén la clave de API del archivo .env
+        // Obtén la clave de API del archivo .env (opcional si la API lo requiere)
         $apiKey = config('services.geocode.api_key');
 
         // Realiza la solicitud a la API

@@ -96,7 +96,6 @@ class ResourceResource extends Resource
                             ->directory('subcategory-images-icons')
                             ->label('Icon')
                             ->image(),
-
                     ]),
 
                 TextInput::make('address')->nullable(),
@@ -149,15 +148,13 @@ class ResourceResource extends Resource
                     ->numeric()
                     ->nullable()
                     ->minValue(-90)
-                    ->maxValue(90)
-                    ->disabled(),  // El usuario no podrá modificar este campo
+                    ->maxValue(90),
 
                 TextInput::make('longitude')
                     ->numeric()
                     ->nullable()
                     ->minValue(-180)
-                    ->maxValue(180)
-                    ->disabled(),  // El usuario no podrá modificar este campo
+                    ->maxValue(180),
 
                 FileUpload::make('images')
                     ->multiple()
