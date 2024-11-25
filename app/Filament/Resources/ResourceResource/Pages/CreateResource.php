@@ -37,10 +37,10 @@ class CreateResource extends CreateRecord
                             $coordinates = $geocodeService->getCoordinates($state->name, $city->name);
 
                             // Actualizamos los datos del formulario con las coordenadas obtenidas
-                            $this->form->fill([
+                            $this->form->fill(array_merge($data, [
                                 'latitude' => $coordinates['latitude'],
                                 'longitude' => $coordinates['longitude'],
-                            ]);
+                            ]));
 
                             // Notificamos al usuario
                             Notification::make()
